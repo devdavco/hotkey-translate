@@ -111,11 +111,11 @@ function getSelectedText() {
 }
 
 function showToastInPage(message) {
-  const existing = document.getElementById('simple-translate-toast');
+  const existing = document.getElementById('hotkey-translate-toast');
   if (existing) existing.remove();
 
   const toast = document.createElement('div');
-  toast.id = 'simple-translate-toast';
+  toast.id = 'hotkey-translate-toast';
   toast.style.cssText = `
     position: fixed;
     top: 20px;

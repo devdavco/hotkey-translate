@@ -1,4 +1,4 @@
-# Simple Translate
+# Hotkey Translate
 
 > Una extensión ligera para traducir texto seleccionado y escuchar pronunciación directamente en tu navegador.
 
@@ -6,7 +6,7 @@
 <div align="center">
 <img width="640" height="400" alt="Screenshot 2026-05-28 at 10 31 00" src="https://github.com/user-attachments/assets/2e4f3c85-752c-4a98-9534-38b97653548c" />
 </div>
-**Simple Translate** es una extensión de navegador diseñada para Vivaldi, Chrome, Edge y Opera. Permite traducir cualquier texto seleccionado con un atajo de teclado, abriendo automáticamente Google Translate en una nueva pestaña. También incluye una función para escuchar la pronunciación del texto seleccionado.
+**Hotkey Translate** es una extensión de navegador diseñada para Vivaldi, Chrome, Edge y Opera. Permite traducir cualquier texto seleccionado con un atajo de teclado, abriendo automáticamente Google Translate en una nueva pestaña. También incluye una función para escuchar la pronunciación del texto seleccionado.
 
 ### ✨ Características
 
@@ -86,7 +86,7 @@ simple-translate/
 ### Cambiar Atajos de Teclado
 
 1. Navega a `vivaldi://extensions/shortcuts`.
-2. Busca "Simple Translate".
+2. Busca "Hotkey Translate".
 3. Haz clic en el campo del atajo y presiona la nueva combinación deseada.
 
 ### Modificar Idiomas por Defecto
@@ -125,7 +125,7 @@ Abre `popup.html` y agrega nuevas opciones dentro de las etiquetas `<select>`:
 
 Para ver errores en tiempo real:
 1. Ve a `vivaldi://extensions`.
-2. Haz clic en **"Inspect views"** (Inspeccionar vistas) bajo "Simple Translate".
+2. Haz clic en **"Inspect views"** (Inspeccionar vistas) bajo "Hotkey Translate".
 3. Revisa la pestaña **Console** en la ventana que se abre.
 
 ## 📄 Licencia
