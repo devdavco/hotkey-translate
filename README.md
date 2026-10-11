@@ -11,7 +11,7 @@
 ### ✨ Características
 
 - **Traducción Instantánea:** Abre Google Translate con el texto seleccionado en una nueva pestaña.
-- **Audio TTS:** Escucha la pronunciación del texto seleccionado.
+- **Audio TTS:** Escucha la pronunciación del texto seleccionado. Pulsa el atajo otra vez para detenerla.
 - **Atajos de Teclado:** Configurables para un flujo de trabajo rápido.
 - **Multi-idioma:** Soporte para múltiples idiomas de origen y destino.
 - **Configuración Persistente:** Guarda tus preferencias de idioma automáticamente.
@@ -56,6 +56,8 @@ cd simple-translate
 | **Traducir Selección** | `Ctrl` + `Shift` + `1` | `Cmd` + `Shift` + `1` |
 | **Escuchar Audio** | `Ctrl` + `Shift` + `2` | `Cmd` + `Shift` + `2` |
 
+> **Detener el audio:** Si pulsas el atajo de audio mientras suena una pronunciación, se detiene (aunque ya no haya texto seleccionado).
+
 > **Nota:** Si los atajos no funcionan, ve a `chrome://extensions/shortcuts` y reasigna las combinaciones manualmente.
 
 ### Configurar Idiomas
@@ -79,6 +81,7 @@ simple-translate/
 ├── popup.js               # Lógica del popup
 ├── _locales/              # Textos en inglés y español
 ├── TESTING.md             # Pruebas manuales
+├── PRIVACY.md             # Política de privacidad
 └── README.md              # Documentación
 ```
 
@@ -91,6 +94,10 @@ simple-translate/
 | `storage` | Guardar tus preferencias de idioma y sincronizarlas entre dispositivos. |
 | `offscreen` | Crear un documento oculto que reproduce el audio de Google Translate sin abrir pestañas. |
 | `tts` | Voz del sistema como respaldo si el audio de Google no se puede reproducir. |
+
+## 🛡️ Privacy
+
+La extensión no recopila datos personales ni usa analíticas. Consulta la [política de privacidad](PRIVACY.md).
 
 ## 🔧 Personalización
 

@@ -16,6 +16,9 @@ Lista de comprobación antes de publicar una versión. Usa Chrome 116 o superior
 - [ ] Texto seleccionado dentro de un `<input>` y de un `<textarea>`: ambos atajos usan solo la parte seleccionada.
 - [ ] Página `chrome://extensions`, Chrome Web Store y página de nueva pestaña: aparece "!" en el icono, desaparece a los 2 segundos y la consola del service worker no muestra errores sin capturar.
 - [ ] Texto largo (más de 200 caracteres): el audio se reproduce y el aviso dice que el texto se recortó a 200 caracteres.
+- [ ] Detener durante la reproducción: pulsar `Ctrl+Shift+2` mientras suena el audio lo detiene y aparece "Audio detenido" / "Audio stopped". Probarlo con la voz de Google y con la voz del sistema (respaldo).
+- [ ] Detener sin selección: mientras suena el audio, quitar la selección y pulsar `Ctrl+Shift+2`. El audio se detiene igual y no aparece "No hay texto seleccionado".
+- [ ] Pulsar cuando el audio ya terminó: `Ctrl+Shift+2` funciona como siempre (reproduce de nuevo si hay texto seleccionado o muestra "No hay texto seleccionado").
 
 ## Popup
 
