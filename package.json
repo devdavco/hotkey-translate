@@ -6,7 +6,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "package": "V=$(node -p \"require('./manifest.json').version\") && mkdir -p dist && rm -f dist/hotkey-translate-$V.zip && zip -r -X dist/hotkey-translate-$V.zip manifest.json background.js settings.js offscreen.html offscreen.js popup.html popup.js _locales icons -x \"*.DS_Store\""
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
