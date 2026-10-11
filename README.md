@@ -1,4 +1,4 @@
-# Simple Translate
+# Hotkey Translate
 
 > Una extensión ligera para traducir texto seleccionado y escuchar pronunciación directamente en tu navegador.
 
@@ -6,7 +6,7 @@
 <div align="center">
 <img width="640" height="400" alt="Screenshot 2026-05-28 at 10 31 00" src="https://github.com/user-attachments/assets/2e4f3c85-752c-4a98-9534-38b97653548c" />
 </div>
-**Simple Translate** es una extensión de navegador diseñada para Vivaldi, Chrome, Edge y Opera. Permite traducir cualquier texto seleccionado con un atajo de teclado, abriendo automáticamente Google Translate en una nueva pestaña. También incluye una función para escuchar la pronunciación del texto seleccionado.
+**Hotkey Translate** es una extensión de navegador diseñada para Vivaldi, Chrome, Edge y Opera. Permite traducir cualquier texto seleccionado con un atajo de teclado, abriendo automáticamente Google Translate en una nueva pestaña. También incluye una función para escuchar la pronunciación del texto seleccionado sin salir de la página.
 
 ### ✨ Características
 
@@ -15,13 +15,13 @@
 - **Atajos de Teclado:** Configurables para un flujo de trabajo rápido.
 - **Multi-idioma:** Soporte para múltiples idiomas de origen y destino.
 - **Configuración Persistente:** Guarda tus preferencias de idioma automáticamente.
-- **Privacidad:** No almacena datos locales; todo el procesamiento ocurre en los servidores de Google.
+- **Privacidad:** Solo guarda tus preferencias de idioma (`chrome.storage.sync`); el texto seleccionado se envía a Google únicamente cuando usas un atajo.
 
 ---
 
 ## 📋 Requisitos
 
-- **Navegador:** Vivaldi, Chrome, Edge u Opera (basados en Chromium).
+- **Navegador:** Chrome 116 o superior (también otros basados en Chromium, como Edge, Opera o Vivaldi).
 - **Soporte:** Manifest V3.
 - **Internet:** Conexión activa requerida para acceder a Google Translate.
 
@@ -34,15 +34,13 @@
 Clona este repositorio o descarga el archivo ZIP y extrae la carpeta.
 
 ```bash
-git clone https://github.com/tu-usuario/simple-translate.git
+git clone https://github.com/devdavco/simple-translate.git
 cd simple-translate
 ```
 
 ### 2. Cargar en el Navegador
 
-1. Abre tu navegador y navega a:
-   - **Vivaldi:** `vivaldi://extensions`
-   - **Chrome:** `chrome://extensions`
+1. Abre Chrome y navega a `chrome://extensions`.
 2. Activa el interruptor **"Modo desarrollador"** (Developer mode) en la esquina superior derecha.
 3. Haz clic en el botón **"Cargar sin firmar"** (Load unpacked).
 4. Selecciona la carpeta `simple-translate` que acabas de descargar.
@@ -58,7 +56,7 @@ cd simple-translate
 | **Traducir Selección** | `Ctrl` + `Shift` + `1` | `Cmd` + `Shift` + `1` |
 | **Escuchar Audio** | `Ctrl` + `Shift` + `2` | `Cmd` + `Shift` + `2` |
 
-> **Nota:** Si los atajos no funcionan, ve a `vivaldi://extensions/shortcuts` (o la URL equivalente en tu navegador) y reasigna las combinaciones manualmente.
+> **Nota:** Si los atajos no funcionan, ve a `chrome://extensions/shortcuts` y reasigna las combinaciones manualmente.
 
 ### Configurar Idiomas
 
@@ -67,34 +65,47 @@ cd simple-translate
    - **Origen:** Idioma del texto seleccionado.
    - **Destino:** Idioma al que quieres traducir.
    - **Audio:** Voz para la pronunciación.
-3. Haz clic en **"Guardar Configuración"**.
+3. Los cambios se guardan automáticamente. El botón de intercambio invierte origen y destino.
 
 ## 📁 Estructura del Proyecto
 
 ```text
 simple-translate/
 ├── manifest.json          # Configuración principal (Manifest V3)
-├── background.js          # Service Worker (Lógica de atajos y mensajes)
-├── content.js            # Script inyectado en las páginas web
-├── popup.html            # Interfaz de configuración (Popup)
-├── popup.js              # Lógica del popup
-└── README.md             # Documentación 
+├── background.js          # Service Worker (atajos, selección, toasts y audio)
+├── settings.js            # Valores por defecto de los idiomas
+├── offscreen.html/.js     # Documento oculto que reproduce el audio
+├── popup.html             # Interfaz de configuración (Popup)
+├── popup.js               # Lógica del popup
+├── _locales/              # Textos en inglés y español
+├── TESTING.md             # Pruebas manuales
+└── README.md              # Documentación
 ```
+
+## 🔐 Permisos
+
+| Permiso | Para qué se usa |
+| :--- | :--- |
+| `activeTab` | Acceso temporal solo a la pestaña activa, y solo cuando pulsas un atajo. Sustituye al acceso a todas las webs (`<all_urls>`). |
+| `scripting` | Leer el texto seleccionado y mostrar el aviso (toast) en esa pestaña con `chrome.scripting.executeScript`. |
+| `storage` | Guardar tus preferencias de idioma y sincronizarlas entre dispositivos. |
+| `offscreen` | Crear un documento oculto que reproduce el audio de Google Translate sin abrir pestañas. |
+| `tts` | Voz del sistema como respaldo si el audio de Google no se puede reproducir. |
 
 ## 🔧 Personalización
 
 ### Cambiar Atajos de Teclado
 
-1. Navega a `vivaldi://extensions/shortcuts`.
-2. Busca "Simple Translate".
+1. Navega a `chrome://extensions/shortcuts`.
+2. Busca "Hotkey Translate".
 3. Haz clic en el campo del atajo y presiona la nueva combinación deseada.
 
 ### Modificar Idiomas por Defecto
 
-Edita el archivo `background.js` y modifica el objeto `defaultSettings`:
+Edita el archivo `settings.js` y modifica el objeto `DEFAULT_SETTINGS`:
 
 ```javascript
-const defaultSettings = {
+export const DEFAULT_SETTINGS = {
   sourceLang: 'en',      // Idioma origen por defecto
   targetLang: 'es',      // Idioma destino por defecto
   ttsLang: 'en-US'       // Idioma de audio por defecto
@@ -103,29 +114,26 @@ const defaultSettings = {
 
 ### Agregar Más Idiomas
 
-Abre `popup.html` y agrega nuevas opciones dentro de las etiquetas `<select>`:
+Abre `popup.html` y agrega nuevas opciones dentro de las etiquetas `<select>`, y añade su nombre en `_locales/en/messages.json` y `_locales/es/messages.json`:
 
 ```html
-<option value="ja">Japonés</option>
-<option value="ko">Coreano</option>
-<!-- Agrega más idiomas según necesites -->
+<option value="ko" data-i18n="langKo">Korean</option>
 ```
 
 ## 🐛 Solución de Problemas
 
 | Problema | Solución Sugerida |
 | :--- | :--- |
-| **Los atajos no responden** | Verifica que estén configurados en `vivaldi://extensions/shortcuts`. |
-| **Error de conexión** | Asegúrate de estar en una página web normal (`http://` o `https://`). No funciona en páginas internas del navegador. |
-| **El audio no suena** | Verifica que el volumen del sistema no esté silenciado y que la pestaña de audio no haya sido bloqueada. |
-| **La extensión no carga** | Ve a `vivaldi://extensions` y haz clic en el icono de recargar junto a la extensión. |
-| **Error "Could not establish connection"** | Asegúrate de que `content_scripts` esté definido en `manifest.json` y que tengas permisos de host. |
+| **Los atajos no responden** | Verifica que estén configurados en `chrome://extensions/shortcuts`. |
+| **Aparece un "!" en el icono** | La página no permite extensiones (`chrome://`, Chrome Web Store, nueva pestaña). Prueba en una página web normal. |
+| **El audio no suena** | Verifica que el volumen del sistema no esté silenciado. Si Google no responde, se usa la voz del sistema. |
+| **La extensión no carga** | Ve a `chrome://extensions` y haz clic en el icono de recargar junto a la extensión. |
 
 ### Depuración
 
 Para ver errores en tiempo real:
-1. Ve a `vivaldi://extensions`.
-2. Haz clic en **"Inspect views"** (Inspeccionar vistas) bajo "Simple Translate".
+1. Ve a `chrome://extensions`.
+2. Haz clic en **"Inspect views"** (Inspeccionar vistas) bajo "Hotkey Translate".
 3. Revisa la pestaña **Console** en la ventana que se abre.
 
 ## 📄 Licencia
@@ -145,7 +153,6 @@ Las contribuciones son bienvenidas. Si deseas mejorar esta extensión:
 ## 🙏 Reconocimientos
 
 - **Google Translate:** Por el servicio de traducción y síntesis de voz.
-- **Web Speech API:** Por la capacidad de síntesis de voz nativa.
 - **Equipo de Vivaldi/Chromium:** Por la plataforma del navegador.
 
 ## 📞 Contacto

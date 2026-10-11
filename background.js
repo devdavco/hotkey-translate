@@ -1,70 +1,135 @@
-// Configuración por defecto
-const defaultSettings = {
-  sourceLang: 'en',
-  targetLang: 'es',
-  ttsLang: 'en-US'
-};
+import { DEFAULT_SETTINGS } from './settings.js';
 
-// Cargar configuración
-chrome.storage.sync.get(defaultSettings, (settings) => {
-  globalThis.savedSettings = settings;
-});
+// The Google Translate voice endpoint only accepts short texts
+const MAX_SPEECH_LENGTH = 200;
 
-// Escuchar cambios en configuración
-chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === 'sync') {
-    globalThis.savedSettings = { ...globalThis.savedSettings, ...changes };
+chrome.commands.onCommand.addListener(async (command, tab) => {
+  let text;
+  try {
+    text = await getSelectedTextInTab(tab.id);
+  } catch {
+    // Pages like chrome:// or the Chrome Web Store block script injection
+    showBadgeError(tab.id);
+    return;
   }
-});
 
-// --- NUEVO: Escuchar clic en el icono de la extensión ---
-chrome.action.onClicked.addListener((tab) => {
-  // Enviar mensaje a la pestaña actual para que ejecute la traducción
-  chrome.tabs.sendMessage(tab.id, { action: 'translate-click' }, (response) => {
-    if (chrome.runtime.lastError) {
-      // Si no hay content script, abrir la URL directamente (fallback)
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0]) {
-          // Intentamos obtener el texto seleccionado de forma limitada o abrimos translate vacío
-          // Nota: Sin content script activo, no podemos obtener el texto fácilmente.
-          // Pero si el content script está activo, este mensaje llegará.
-        }
-      });
-    }
-  });
-});
+  if (!text) {
+    showToast(tab.id, chrome.i18n.getMessage('toastNoText'));
+    return;
+  }
 
-// Escuchar comandos de teclado (si logramos configurarlos)
-chrome.commands.onCommand.addListener((command) => {
-  console.log('Comando recibido:', command);
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs[0]) {
-      chrome.tabs.sendMessage(tabs[0].id, { 
-        action: command === 'translate-selection' ? 'translate' : 'speak' 
-      });
-    }
-  });
-});
+  const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
 
-// Escuchar mensajes de content script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'openTranslateUrl') {
-    const url = `https://translate.google.com/?sl=${request.sourceLang}&tl=${request.targetLang}&text=${encodeURIComponent(request.text)}&op=translate`;
+  if (command === 'translate-selection') {
+    const url = `https://translate.google.com/?sl=${settings.sourceLang}&tl=${settings.targetLang}&text=${encodeURIComponent(text)}&op=translate`;
     chrome.tabs.create({ url: url });
-    sendResponse({ success: true });
-    return true;
+    showToast(tab.id, chrome.i18n.getMessage('toastTranslating'));
   }
-  
-    if (request.action === 'playAudio') {
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=tw-ob&tl=${request.ttsLang}&q=${encodeURIComponent(request.text)}&textlen=${request.text.length}`;
-    
-    // CAMBIO: Abrir en pestaña activa (active: true) y NO cerrar automáticamente
-    chrome.tabs.create({ url: url, active: true }, (tab) => {
-      // Ya no hay setTimeout para cerrar la pestaña
-      console.log('Audio playing in new tab:', tab.id);
-    });
-    
-    sendResponse({ success: true });
-    return true;
+
+  if (command === 'speak-selection') {
+    if (text.length > MAX_SPEECH_LENGTH) {
+      text = text.slice(0, MAX_SPEECH_LENGTH);
+      showToast(tab.id, chrome.i18n.getMessage('toastTrimmed', [String(MAX_SPEECH_LENGTH)]));
+    } else {
+      showToast(tab.id, chrome.i18n.getMessage('toastSpeaking'));
+    }
+    playAudio(text, settings.ttsLang);
   }
 });
+
+async function playAudio(text, lang) {
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=tw-ob&tl=${lang}&q=${encodeURIComponent(text)}&textlen=${text.length}`;
+
+  let played = false;
+  try {
+    await ensureOffscreenDocument();
+    const response = await chrome.runtime.sendMessage({ target: 'offscreen', action: 'play', url: url });
+    played = response && response.ok;
+  } catch {
+    // Leave played as false and use the fallback below
+  }
+
+  // Fallback: the browser's built-in voice
+  if (!played) {
+    chrome.tts.speak(text, { lang: lang });
+  }
+}
+
+let creatingOffscreen = null;
+
+async function ensureOffscreenDocument() {
+  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+  if (contexts.length > 0) return;
+
+  // If two shortcuts arrive at once, wait for the first creation instead of creating twice
+  if (!creatingOffscreen) {
+    creatingOffscreen = chrome.offscreen.createDocument({
+      url: 'offscreen.html',
+      reasons: ['AUDIO_PLAYBACK'],
+      justification: 'Play the pronunciation of the selected text'
+    });
+  }
+  try {
+    await creatingOffscreen;
+  } finally {
+    creatingOffscreen = null;
+  }
+}
+
+async function getSelectedTextInTab(tabId) {
+  const results = await chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    func: getSelectedText
+  });
+  return results[0].result;
+}
+
+function showToast(tabId, message) {
+  chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    func: showToastInPage,
+    args: [message]
+  });
+}
+
+function showBadgeError(tabId) {
+  chrome.action.setBadgeText({ tabId: tabId, text: '!' });
+  setTimeout(() => {
+    chrome.action.setBadgeText({ tabId: tabId, text: '' });
+  }, 2000);
+}
+
+// --- Functions below run inside the web page, not in the service worker ---
+
+function getSelectedText() {
+  // window.getSelection() does not see text selected inside form fields
+  const el = document.activeElement;
+  if (el && (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT')) {
+    return el.value.slice(el.selectionStart, el.selectionEnd).trim();
+  }
+  return window.getSelection().toString().trim();
+}
+
+function showToastInPage(message) {
+  const existing = document.getElementById('hotkey-translate-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'hotkey-translate-toast';
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    z-index: 2147483647;
+    font-family: sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}

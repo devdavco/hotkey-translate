@@ -1,31 +1,79 @@
-// Cargar configuración actual
-chrome.storage.sync.get({
-  sourceLang: 'en',
-  targetLang: 'es',
-  ttsLang: 'en-US'
-}, (settings) => {
-  document.getElementById('sourceLang').value = settings.sourceLang;
-  document.getElementById('targetLang').value = settings.targetLang;
-  document.getElementById('ttsLang').value = settings.ttsLang;
+import { DEFAULT_SETTINGS } from './settings.js';
+
+const sourceSelect = document.getElementById('sourceLang');
+const targetSelect = document.getElementById('targetLang');
+const ttsSelect = document.getElementById('ttsLang');
+const swapBtn = document.getElementById('swapBtn');
+const status = document.getElementById('status');
+
+localizePage();
+
+// Replace the text of every element marked with data-i18n (and the title of data-i18n-title)
+function localizePage() {
+  document.documentElement.lang = chrome.i18n.getUILanguage();
+  for (const el of document.querySelectorAll('[data-i18n]')) {
+    el.textContent = chrome.i18n.getMessage(el.dataset.i18n);
+  }
+  for (const el of document.querySelectorAll('[data-i18n-title]')) {
+    el.title = chrome.i18n.getMessage(el.dataset.i18nTitle);
+  }
+}
+
+// Load saved settings into the selects
+chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
+  sourceSelect.value = settings.sourceLang;
+  targetSelect.value = settings.targetLang;
+  ttsSelect.value = settings.ttsLang;
+  updateSwapButton();
 });
 
-// Guardar configuración
-document.getElementById('saveBtn').addEventListener('click', () => {
-  const settings = {
-    sourceLang: document.getElementById('sourceLang').value,
-    targetLang: document.getElementById('targetLang').value,
-    ttsLang: document.getElementById('ttsLang').value
-  };
-  
-  chrome.storage.sync.set(settings, () => {
-    const btn = document.getElementById('saveBtn');
-    const originalText = btn.textContent;
-    btn.textContent = '✓ Guardado';
-    btn.style.background = '#34a853';
-    
+// Save as soon as any select changes
+sourceSelect.addEventListener('change', saveSettings);
+targetSelect.addEventListener('change', saveSettings);
+ttsSelect.addEventListener('change', saveSettings);
+
+swapBtn.addEventListener('click', () => {
+  const oldSource = sourceSelect.value;
+  sourceSelect.value = targetSelect.value;
+  targetSelect.value = oldSource;
+  saveSettings();
+});
+
+function saveSettings() {
+  updateSwapButton();
+  chrome.storage.sync.set({
+    sourceLang: sourceSelect.value,
+    targetLang: targetSelect.value,
+    ttsLang: ttsSelect.value
+  }, () => {
+    status.textContent = chrome.i18n.getMessage('saved');
     setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '#4285f4';
+      status.textContent = '';
     }, 1500);
   });
+}
+
+// "Detect automatically" cannot be a target language
+function updateSwapButton() {
+  swapBtn.disabled = sourceSelect.value === 'auto';
+}
+
+// Show the real shortcuts, which the user may have changed
+chrome.commands.getAll((commands) => {
+  const list = document.getElementById('shortcuts');
+  for (const command of commands) {
+    if (command.name.startsWith('_')) continue; // skip built-in commands like _execute_action
+    const item = document.createElement('li');
+    const keys = document.createElement('span');
+    keys.className = 'shortcut';
+    keys.textContent = command.shortcut || chrome.i18n.getMessage('notSet');
+    item.append(keys, ' ' + command.description);
+    list.appendChild(item);
+  }
+});
+
+// Links to chrome:// pages do not work from a popup, so open a tab instead
+document.getElementById('shortcutsLink').addEventListener('click', (event) => {
+  event.preventDefault();
+  chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
 });

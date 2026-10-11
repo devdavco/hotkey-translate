@@ -1,0 +1,98 @@
+{
+  "extName": {
+    "message": "Hotkey Translate"
+  },
+  "extDescription": {
+    "message": "Translate selected text and hear its pronunciation with keyboard shortcuts."
+  },
+  "cmdTranslate": {
+    "message": "Translate selected text"
+  },
+  "cmdSpeak": {
+    "message": "Hear pronunciation"
+  },
+  "sourceLabel": {
+    "message": "Source language:"
+  },
+  "targetLabel": {
+    "message": "Target language:"
+  },
+  "ttsLabel": {
+    "message": "Audio language:"
+  },
+  "swapTitle": {
+    "message": "Swap languages"
+  },
+  "saved": {
+    "message": "Saved"
+  },
+  "shortcutsTitle": {
+    "message": "Keyboard shortcuts:"
+  },
+  "shortcutsNote": {
+    "message": "Defaults: Ctrl+Shift+1 and Ctrl+Shift+2 (Command on Mac). You can change them."
+  },
+  "changeShortcuts": {
+    "message": "Change shortcuts"
+  },
+  "notSet": {
+    "message": "Not set"
+  },
+  "toastNoText": {
+    "message": "No text selected"
+  },
+  "toastTranslating": {
+    "message": "Opening Google Translate..."
+  },
+  "toastSpeaking": {
+    "message": "Playing audio..."
+  },
+  "toastTrimmed": {
+    "message": "Text trimmed to $COUNT$ characters. Playing audio...",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "200"
+      }
+    }
+  },
+  "langAuto": {
+    "message": "Detect automatically"
+  },
+  "langEn": {
+    "message": "English"
+  },
+  "langEnUS": {
+    "message": "English (US)"
+  },
+  "langEnGB": {
+    "message": "English (UK)"
+  },
+  "langEs": {
+    "message": "Spanish"
+  },
+  "langFr": {
+    "message": "French"
+  },
+  "langDe": {
+    "message": "German"
+  },
+  "langIt": {
+    "message": "Italian"
+  },
+  "langPt": {
+    "message": "Portuguese"
+  },
+  "langPtBR": {
+    "message": "Portuguese (Brazil)"
+  },
+  "langRu": {
+    "message": "Russian"
+  },
+  "langJa": {
+    "message": "Japanese"
+  },
+  "langZhCN": {
+    "message": "Chinese (Simplified)"
+  }
+}
