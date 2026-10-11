@@ -4,6 +4,12 @@ import { DEFAULT_SETTINGS } from './settings.js';
 const MAX_SPEECH_LENGTH = 200;
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
+  // Check before reading the selection, so stopping works even with nothing selected
+  if (command === 'speak-selection' && await stopAudio()) {
+    showToast(tab.id, chrome.i18n.getMessage('toastStopped'));
+    return;
+  }
+
   let text;
   try {
     text = await getSelectedTextInTab(tab.id);
@@ -55,11 +61,38 @@ async function playAudio(text, lang) {
   }
 }
 
+// Returns true if some audio was playing and got stopped
+async function stopAudio() {
+  let stopped = false;
+
+  // Google voice: only ask if the offscreen document already exists
+  if (await hasOffscreenDocument()) {
+    try {
+      const response = await chrome.runtime.sendMessage({ target: 'offscreen', action: 'stop' });
+      stopped = Boolean(response && response.stopped);
+    } catch {
+      // No answer means nothing to stop
+    }
+  }
+
+  // Fallback voice
+  if (await chrome.tts.isSpeaking()) {
+    chrome.tts.stop();
+    stopped = true;
+  }
+
+  return stopped;
+}
+
+async function hasOffscreenDocument() {
+  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+  return contexts.length > 0;
+}
+
 let creatingOffscreen = null;
 
 async function ensureOffscreenDocument() {
-  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
-  if (contexts.length > 0) return;
+  if (await hasOffscreenDocument()) return;
 
   // If two shortcuts arrive at once, wait for the first creation instead of creating twice
   if (!creatingOffscreen) {
@@ -89,6 +122,8 @@ function showToast(tabId, message) {
     target: { tabId: tabId },
     func: showToastInPage,
     args: [message]
+  }).catch(() => {
+    // Pages like chrome:// block the toast; nothing else to do
   });
 }
 

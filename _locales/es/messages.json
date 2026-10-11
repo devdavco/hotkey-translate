@@ -56,6 +56,9 @@
       }
     }
   },
+  "toastStopped": {
+    "message": "Audio detenido"
+  },
   "langAuto": {
     "message": "Detectar automáticamente"
   },

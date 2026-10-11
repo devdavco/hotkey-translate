@@ -11,7 +11,7 @@
 ### ✨ Características
 
 - **Traducción Instantánea:** Abre Google Translate con el texto seleccionado en una nueva pestaña.
-- **Audio TTS:** Escucha la pronunciación del texto seleccionado.
+- **Audio TTS:** Escucha la pronunciación del texto seleccionado. Pulsa el atajo otra vez para detenerla.
 - **Atajos de Teclado:** Configurables para un flujo de trabajo rápido.
 - **Multi-idioma:** Soporte para múltiples idiomas de origen y destino.
 - **Configuración Persistente:** Guarda tus preferencias de idioma automáticamente.
@@ -55,6 +55,8 @@ cd simple-translate
 | :--- | :--- | :--- |
 | **Traducir Selección** | `Ctrl` + `Shift` + `1` | `Cmd` + `Shift` + `1` |
 | **Escuchar Audio** | `Ctrl` + `Shift` + `2` | `Cmd` + `Shift` + `2` |
+
+> **Detener el audio:** Si pulsas el atajo de audio mientras suena una pronunciación, se detiene (aunque ya no haya texto seleccionado).
 
 > **Nota:** Si los atajos no funcionan, ve a `chrome://extensions/shortcuts` y reasigna las combinaciones manualmente.
 
