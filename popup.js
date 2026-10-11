@@ -1,9 +1,7 @@
+import { DEFAULT_SETTINGS } from './settings.js';
+
 // Cargar configuración actual
-chrome.storage.sync.get({
-  sourceLang: 'en',
-  targetLang: 'es',
-  ttsLang: 'en-US'
-}, (settings) => {
+chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
   document.getElementById('sourceLang').value = settings.sourceLang;
   document.getElementById('targetLang').value = settings.targetLang;
   document.getElementById('ttsLang').value = settings.ttsLang;
