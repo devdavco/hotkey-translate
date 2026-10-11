@@ -81,6 +81,7 @@ simple-translate/
 ├── popup.js               # Lógica del popup
 ├── _locales/              # Textos en inglés y español
 ├── TESTING.md             # Pruebas manuales
+├── PRIVACY.md             # Política de privacidad
 └── README.md              # Documentación
 ```
 
@@ -93,6 +94,10 @@ simple-translate/
 | `storage` | Guardar tus preferencias de idioma y sincronizarlas entre dispositivos. |
 | `offscreen` | Crear un documento oculto que reproduce el audio de Google Translate sin abrir pestañas. |
 | `tts` | Voz del sistema como respaldo si el audio de Google no se puede reproducir. |
+
+## 🛡️ Privacy
+
+La extensión no recopila datos personales ni usa analíticas. Consulta la [política de privacidad](PRIVACY.md).
 
 ## 🔧 Personalización
 
