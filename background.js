@@ -1,5 +1,8 @@
 import { DEFAULT_SETTINGS } from './settings.js';
 
+// The Google Translate voice endpoint only accepts short texts
+const MAX_SPEECH_LENGTH = 200;
+
 chrome.commands.onCommand.addListener(async (command, tab) => {
   let text;
   try {
@@ -24,11 +27,54 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   }
 
   if (command === 'speak-selection') {
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=tw-ob&tl=${settings.ttsLang}&q=${encodeURIComponent(text)}&textlen=${text.length}`;
-    chrome.tabs.create({ url: url, active: true });
-    showToast(tab.id, 'Reproduciendo audio...');
+    if (text.length > MAX_SPEECH_LENGTH) {
+      text = text.slice(0, MAX_SPEECH_LENGTH);
+      showToast(tab.id, `Texto recortado a ${MAX_SPEECH_LENGTH} caracteres. Reproduciendo audio...`);
+    } else {
+      showToast(tab.id, 'Reproduciendo audio...');
+    }
+    playAudio(text, settings.ttsLang);
   }
 });
+
+async function playAudio(text, lang) {
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&client=tw-ob&tl=${lang}&q=${encodeURIComponent(text)}&textlen=${text.length}`;
+
+  let played = false;
+  try {
+    await ensureOffscreenDocument();
+    const response = await chrome.runtime.sendMessage({ target: 'offscreen', action: 'play', url: url });
+    played = response && response.ok;
+  } catch {
+    // Leave played as false and use the fallback below
+  }
+
+  // Fallback: the browser's built-in voice
+  if (!played) {
+    chrome.tts.speak(text, { lang: lang });
+  }
+}
+
+let creatingOffscreen = null;
+
+async function ensureOffscreenDocument() {
+  const contexts = await chrome.runtime.getContexts({ contextTypes: ['OFFSCREEN_DOCUMENT'] });
+  if (contexts.length > 0) return;
+
+  // If two shortcuts arrive at once, wait for the first creation instead of creating twice
+  if (!creatingOffscreen) {
+    creatingOffscreen = chrome.offscreen.createDocument({
+      url: 'offscreen.html',
+      reasons: ['AUDIO_PLAYBACK'],
+      justification: 'Play the pronunciation of the selected text'
+    });
+  }
+  try {
+    await creatingOffscreen;
+  } finally {
+    creatingOffscreen = null;
+  }
+}
 
 async function getSelectedTextInTab(tabId) {
   const results = await chrome.scripting.executeScript({

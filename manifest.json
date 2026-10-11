@@ -3,10 +3,13 @@
   "name": "Simple Translate",
   "version": "1.1",
   "description": "Traduce texto seleccionado y escucha pronunciación con atajos de teclado.",
+  "minimum_chrome_version": "116",
   "permissions": [
     "activeTab",
+    "offscreen",
     "scripting",
-    "storage"
+    "storage",
+    "tts"
   ],
   "background": {
     "service_worker": "background.js",
