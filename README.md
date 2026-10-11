@@ -4,7 +4,7 @@
 
 ## 📖 Descripción
 <div align="center">
-<img width="640" height="400" alt="Screenshot 2026-05-28 at 10 31 00" src="https://github.com/user-attachments/assets/2e4f3c85-752c-4a98-9534-38b97653548c" />
+   <img width="302" height="452" alt="image" src="https://github.com/user-attachments/assets/ba213111-e71d-4884-900e-d3f87f48fc41" />
 </div>
 **Hotkey Translate** es una extensión de navegador diseñada para Vivaldi, Chrome, Edge y Opera. Permite traducir cualquier texto seleccionado con un atajo de teclado, abriendo automáticamente Google Translate en una nueva pestaña. También incluye una función para escuchar la pronunciación del texto seleccionado sin salir de la página.
 
