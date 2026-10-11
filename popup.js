@@ -6,6 +6,19 @@ const ttsSelect = document.getElementById('ttsLang');
 const swapBtn = document.getElementById('swapBtn');
 const status = document.getElementById('status');
 
+localizePage();
+
+// Replace the text of every element marked with data-i18n (and the title of data-i18n-title)
+function localizePage() {
+  document.documentElement.lang = chrome.i18n.getUILanguage();
+  for (const el of document.querySelectorAll('[data-i18n]')) {
+    el.textContent = chrome.i18n.getMessage(el.dataset.i18n);
+  }
+  for (const el of document.querySelectorAll('[data-i18n-title]')) {
+    el.title = chrome.i18n.getMessage(el.dataset.i18nTitle);
+  }
+}
+
 // Load saved settings into the selects
 chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
   sourceSelect.value = settings.sourceLang;
@@ -33,7 +46,7 @@ function saveSettings() {
     targetLang: targetSelect.value,
     ttsLang: ttsSelect.value
   }, () => {
-    status.textContent = 'Guardado';
+    status.textContent = chrome.i18n.getMessage('saved');
     setTimeout(() => {
       status.textContent = '';
     }, 1500);
@@ -53,7 +66,7 @@ chrome.commands.getAll((commands) => {
     const item = document.createElement('li');
     const keys = document.createElement('span');
     keys.className = 'shortcut';
-    keys.textContent = command.shortcut || 'Sin asignar';
+    keys.textContent = command.shortcut || chrome.i18n.getMessage('notSet');
     item.append(keys, ' ' + command.description);
     list.appendChild(item);
   }

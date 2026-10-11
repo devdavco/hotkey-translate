@@ -93,58 +93,58 @@
   </style>
 </head>
 <body>
-  <h1>Simple Translate</h1>
+  <h1 data-i18n="extName">Simple Translate</h1>
 
-  <label for="sourceLang">Idioma origen:</label>
+  <label for="sourceLang" data-i18n="sourceLabel">Source language:</label>
   <select id="sourceLang">
-    <option value="auto">Detectar automáticamente</option>
-    <option value="en">Inglés</option>
-    <option value="es">Español</option>
-    <option value="fr">Francés</option>
-    <option value="de">Alemán</option>
-    <option value="it">Italiano</option>
-    <option value="pt">Portugués</option>
-    <option value="ru">Ruso</option>
-    <option value="ja">Japonés</option>
-    <option value="zh-CN">Chino (Simplificado)</option>
+    <option value="auto" data-i18n="langAuto">Detect automatically</option>
+    <option value="en" data-i18n="langEn">English</option>
+    <option value="es" data-i18n="langEs">Spanish</option>
+    <option value="fr" data-i18n="langFr">French</option>
+    <option value="de" data-i18n="langDe">German</option>
+    <option value="it" data-i18n="langIt">Italian</option>
+    <option value="pt" data-i18n="langPt">Portuguese</option>
+    <option value="ru" data-i18n="langRu">Russian</option>
+    <option value="ja" data-i18n="langJa">Japanese</option>
+    <option value="zh-CN" data-i18n="langZhCN">Chinese (Simplified)</option>
   </select>
 
-  <button id="swapBtn" title="Intercambiar idiomas">&#8645;</button>
+  <button id="swapBtn" data-i18n-title="swapTitle" title="Swap languages">&#8645;</button>
 
-  <label for="targetLang">Idioma destino:</label>
+  <label for="targetLang" data-i18n="targetLabel">Target language:</label>
   <select id="targetLang">
-    <option value="en">Inglés</option>
-    <option value="es">Español</option>
-    <option value="fr">Francés</option>
-    <option value="de">Alemán</option>
-    <option value="it">Italiano</option>
-    <option value="pt">Portugués</option>
-    <option value="ru">Ruso</option>
-    <option value="ja">Japonés</option>
-    <option value="zh-CN">Chino (Simplificado)</option>
+    <option value="en" data-i18n="langEn">English</option>
+    <option value="es" data-i18n="langEs">Spanish</option>
+    <option value="fr" data-i18n="langFr">French</option>
+    <option value="de" data-i18n="langDe">German</option>
+    <option value="it" data-i18n="langIt">Italian</option>
+    <option value="pt" data-i18n="langPt">Portuguese</option>
+    <option value="ru" data-i18n="langRu">Russian</option>
+    <option value="ja" data-i18n="langJa">Japanese</option>
+    <option value="zh-CN" data-i18n="langZhCN">Chinese (Simplified)</option>
   </select>
 
-  <label for="ttsLang">Idioma de audio:</label>
+  <label for="ttsLang" data-i18n="ttsLabel">Audio language:</label>
   <select id="ttsLang">
-    <option value="en-US">Inglés (US)</option>
-    <option value="en-GB">Inglés (UK)</option>
-    <option value="es-ES">Español</option>
-    <option value="fr-FR">Francés</option>
-    <option value="de-DE">Alemán</option>
-    <option value="it-IT">Italiano</option>
-    <option value="pt-BR">Portugués (Brasil)</option>
-    <option value="ru-RU">Ruso</option>
-    <option value="ja-JP">Japonés</option>
-    <option value="zh-CN">Chino (Simplificado)</option>
+    <option value="en-US" data-i18n="langEnUS">English (US)</option>
+    <option value="en-GB" data-i18n="langEnGB">English (UK)</option>
+    <option value="es-ES" data-i18n="langEs">Spanish</option>
+    <option value="fr-FR" data-i18n="langFr">French</option>
+    <option value="de-DE" data-i18n="langDe">German</option>
+    <option value="it-IT" data-i18n="langIt">Italian</option>
+    <option value="pt-BR" data-i18n="langPtBR">Portuguese (Brazil)</option>
+    <option value="ru-RU" data-i18n="langRu">Russian</option>
+    <option value="ja-JP" data-i18n="langJa">Japanese</option>
+    <option value="zh-CN" data-i18n="langZhCN">Chinese (Simplified)</option>
   </select>
 
   <div id="status"></div>
 
   <div class="info">
-    <strong>Atajos de teclado:</strong>
+    <strong data-i18n="shortcutsTitle">Keyboard shortcuts:</strong>
     <ul id="shortcuts"></ul>
-    <div class="note">Atajos por defecto: Ctrl+Shift+1 y Ctrl+Shift+2 (Command en Mac). Puedes cambiarlos.</div>
-    <a href="#" id="shortcutsLink">Cambiar atajos</a>
+    <div class="note" data-i18n="shortcutsNote">Defaults: Ctrl+Shift+1 and Ctrl+Shift+2 (Command on Mac). You can change them.</div>
+    <a href="#" id="shortcutsLink" data-i18n="changeShortcuts">Change shortcuts</a>
   </div>
 
   <script type="module" src="popup.js"></script>

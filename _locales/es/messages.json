@@ -1,0 +1,98 @@
+{
+  "extName": {
+    "message": "Simple Translate"
+  },
+  "extDescription": {
+    "message": "Traduce texto seleccionado y escucha su pronunciación con atajos de teclado."
+  },
+  "cmdTranslate": {
+    "message": "Traducir texto seleccionado"
+  },
+  "cmdSpeak": {
+    "message": "Escuchar pronunciación"
+  },
+  "sourceLabel": {
+    "message": "Idioma origen:"
+  },
+  "targetLabel": {
+    "message": "Idioma destino:"
+  },
+  "ttsLabel": {
+    "message": "Idioma de audio:"
+  },
+  "swapTitle": {
+    "message": "Intercambiar idiomas"
+  },
+  "saved": {
+    "message": "Guardado"
+  },
+  "shortcutsTitle": {
+    "message": "Atajos de teclado:"
+  },
+  "shortcutsNote": {
+    "message": "Por defecto: Ctrl+Shift+1 y Ctrl+Shift+2 (Command en Mac). Puedes cambiarlos."
+  },
+  "changeShortcuts": {
+    "message": "Cambiar atajos"
+  },
+  "notSet": {
+    "message": "Sin asignar"
+  },
+  "toastNoText": {
+    "message": "No hay texto seleccionado"
+  },
+  "toastTranslating": {
+    "message": "Abriendo Google Translate..."
+  },
+  "toastSpeaking": {
+    "message": "Reproduciendo audio..."
+  },
+  "toastTrimmed": {
+    "message": "Texto recortado a $COUNT$ caracteres. Reproduciendo audio...",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "200"
+      }
+    }
+  },
+  "langAuto": {
+    "message": "Detectar automáticamente"
+  },
+  "langEn": {
+    "message": "Inglés"
+  },
+  "langEnUS": {
+    "message": "Inglés (EE. UU.)"
+  },
+  "langEnGB": {
+    "message": "Inglés (Reino Unido)"
+  },
+  "langEs": {
+    "message": "Español"
+  },
+  "langFr": {
+    "message": "Francés"
+  },
+  "langDe": {
+    "message": "Alemán"
+  },
+  "langIt": {
+    "message": "Italiano"
+  },
+  "langPt": {
+    "message": "Portugués"
+  },
+  "langPtBR": {
+    "message": "Portugués (Brasil)"
+  },
+  "langRu": {
+    "message": "Ruso"
+  },
+  "langJa": {
+    "message": "Japonés"
+  },
+  "langZhCN": {
+    "message": "Chino (simplificado)"
+  }
+}

@@ -14,7 +14,7 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   }
 
   if (!text) {
-    showToast(tab.id, 'No hay texto seleccionado');
+    showToast(tab.id, chrome.i18n.getMessage('toastNoText'));
     return;
   }
 
@@ -23,15 +23,15 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   if (command === 'translate-selection') {
     const url = `https://translate.google.com/?sl=${settings.sourceLang}&tl=${settings.targetLang}&text=${encodeURIComponent(text)}&op=translate`;
     chrome.tabs.create({ url: url });
-    showToast(tab.id, 'Abriendo Google Translate...');
+    showToast(tab.id, chrome.i18n.getMessage('toastTranslating'));
   }
 
   if (command === 'speak-selection') {
     if (text.length > MAX_SPEECH_LENGTH) {
       text = text.slice(0, MAX_SPEECH_LENGTH);
-      showToast(tab.id, `Texto recortado a ${MAX_SPEECH_LENGTH} caracteres. Reproduciendo audio...`);
+      showToast(tab.id, chrome.i18n.getMessage('toastTrimmed', [String(MAX_SPEECH_LENGTH)]));
     } else {
-      showToast(tab.id, 'Reproduciendo audio...');
+      showToast(tab.id, chrome.i18n.getMessage('toastSpeaking'));
     }
     playAudio(text, settings.ttsLang);
   }
