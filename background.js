@@ -111,10 +111,12 @@ async function ensureOffscreenDocument() {
 
 async function getSelectedTextInTab(tabId) {
   const results = await chrome.scripting.executeScript({
-    target: { tabId: tabId },
+    target: { tabId: tabId, allFrames: true },
     func: getSelectedText
   });
-  return results[0].result;
+  // Cada frame devuelve su selección; nos quedamos con la primera que tenga texto
+  const hit = results.find(r => r.result);
+  return hit ? hit.result : '';
 }
 
 function showToast(tabId, message) {
